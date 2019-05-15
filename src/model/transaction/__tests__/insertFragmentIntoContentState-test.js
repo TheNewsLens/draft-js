@@ -403,3 +403,23 @@ test('must throw an error when trying to apply ContentBlockNode fragments when s
     ),
   );
 });
+
+test('must insert fragment when size is 1 and length is zero', () => {
+  assertInsertFragmentIntoContentState(
+    createFragment([
+      {
+        ...DEFAULT_BLOCK_CONFIG,
+        key: 'j',
+        type: 'unstyled',
+        text: '123',
+      },
+    ]),
+    selectionState.merge({
+      focusKey: 'd',
+      focusOffset: 0,
+      anchorKey: 'd',
+      anchorOffset: 0,
+      isBackward: false,
+    }),
+  );
+});
