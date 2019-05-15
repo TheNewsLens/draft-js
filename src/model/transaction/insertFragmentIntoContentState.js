@@ -234,7 +234,7 @@ const insertFragment = (
   const head = fragment.first();
   const tail = fragment.last();
   const finalOffset = tail.getLength();
-  const finalKey = tail.getKey();
+  let finalKey = tail.getKey();
   const shouldNotUpdateFromFragmentBlock =
     isTreeBasedBlockMap &&
     (!target.getChildKeys().isEmpty() || !head.getChildKeys().isEmpty());
@@ -274,6 +274,11 @@ const insertFragment = (
       target,
       head,
     );
+  }
+
+  // when insert only one fragment use the targetKey for selection anchor key
+  if (fragmentSize === 1) {
+    finalKey = targetKey;
   }
 
   return contentState.merge({
