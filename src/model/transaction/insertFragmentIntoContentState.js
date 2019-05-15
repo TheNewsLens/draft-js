@@ -259,8 +259,10 @@ const insertFragment = (
       .slice(shouldNotUpdateFromFragmentBlock ? 0 : 1, fragmentSize - 1)
       .forEach(fragmentBlock => newBlockArr.push(fragmentBlock));
 
-    // update tail
-    newBlockArr.push(updateTail(block, targetOffset, fragment));
+    if (fragmentSize !== 1) {
+      // update tail
+      newBlockArr.push(updateTail(block, targetOffset, fragment));
+    }
   });
 
   let updatedBlockMap = BlockMapBuilder.createFromArray(newBlockArr);
@@ -301,6 +303,7 @@ const insertFragmentIntoContentState = (
   const fragment = randomizeBlockMapKeys(fragmentBlockMap);
   const targetKey = selectionState.getStartKey();
   const targetOffset = selectionState.getStartOffset();
+  const isTreeBasedBlockMap = blockMap.first() instanceof ContentBlockNode;
 
   const targetBlock = blockMap.get(targetKey);
 
@@ -311,9 +314,9 @@ const insertFragmentIntoContentState = (
     );
   }
 
-  // When we insert a fragment with a single block we simply update the target block
-  // with the contents of the inserted fragment block
-  if (fragment.size === 1) {
+  // When we insert a fragment with a single block and no texts inside
+  // we simply update the target block with the contents of the inserted fragment block
+  if (fragment.size === 1 && (isTreeBasedBlockMap || targetBlock.getLength() !== 0)) {
     return updateExistingBlock(
       contentState,
       selectionState,
